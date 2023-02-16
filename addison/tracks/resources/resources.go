@@ -50,7 +50,9 @@ func addNewTrack(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    repoResponse := repository.AddNewTrack(id.(string), audio.(string))
+    track := repository.Track{Id : id.(string), Audio : audio.(string)}
+
+    repoResponse := repository.AddNewTrack(track)
     
     if repoResponse == 0 {
         // track already exists
@@ -115,6 +117,11 @@ func getAllTracks(w http.ResponseWriter, r *http.Request) {
         w.WriteHeader(http.StatusNotFound)
     }
 
+    titles := make([]string, len(allTracks))
+    for _, t := range allTracks {
+        titles = append(titles, t.Id)
+    }
+
     w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(allTracks)
+    json.NewEncoder(w).Encode(titles)
 }

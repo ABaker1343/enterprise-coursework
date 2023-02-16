@@ -14,11 +14,16 @@ import (
 	"net/http"
 	"tracks/repository"
 	"tracks/resources"
+    "fmt"
 )
 
 func main() {
     print("this is the tracks microservice\n")
+    fmt.Println("initialising repo")
     repository.Init()
+    fmt.Println("creating table")
+    repository.Create()
 
+    fmt.Println("listening on port 3000")
     http.ListenAndServe(":3000", resources.Router())
 }
