@@ -43,6 +43,15 @@ func Create() int {
     }
 }
 
+func Clear() int {
+    const sql = "DROP TABLE tracks"
+    if _, err := repo.DB.Exec(sql); err == nil {
+        return 0
+    } else {
+        return -1
+    }
+}
+
 func AddNewTrack(t Track) int64 {
     const sql = "INSERT INTO tracks (id, audio) VALUES (?, ?)"
     if stmt, err := repo.DB.Prepare(sql); err == nil {
@@ -114,5 +123,32 @@ func GetAllTracks() ([]Track, int) {
         // failed to prepare statement
         repo.Log.Output(2, "failed to prepare sql select statement")
         return []Track{}, -1
+    }
+}
+
+func DeleteTrack(id string) int64 {
+    const sql = "DELETE FROM tracks WHERE id = ?"
+    if stmt, err := repo.DB.Prepare(sql); err == nil {
+        defer stmt.Close()
+        if result, err := stmt.Exec(id); err == nil {
+            if n, err := result.RowsAffected(); err == nil {
+                return n
+            } else {
+                // couldnt check rows affected
+                repo.Log.Output(2, err.Error())
+                repo.Log.Output(2, "failed to read rows affected in sql delete statement")
+                return -1
+            }
+        } else {
+            // failed to execute delete statement
+            repo.Log.Output(2, err.Error())
+            repo.Log.Output(2, "failed to execute sql delete statement")
+            return -1
+        }
+    } else {
+        // failed to prepare statement
+        repo.Log.Output(2, err.Error())
+        repo.Log.Output(2, "failed to prepare sql delete statement")
+        return -1
     }
 }

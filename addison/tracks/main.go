@@ -21,6 +21,8 @@ func main() {
     print("this is the tracks microservice\n")
     fmt.Println("initialising repo")
     repository.Init()
+    fmt.Println("clearing tables")
+    repository.Clear()
     fmt.Println("creating table")
     repository.Create()
 

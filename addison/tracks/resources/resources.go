@@ -19,6 +19,9 @@ func Router() http.Handler {
 
     // list all available tracks
     router.HandleFunc("/tracks", getAllTracks).Methods("GET")
+
+    // delete a track by id
+    router.HandleFunc("/tracks/{id}", deleteTrack).Methods("DELETE")
     
     return router
 }
@@ -60,13 +63,6 @@ func addNewTrack(w http.ResponseWriter, r *http.Request) {
         return
     } else if repoResponse == -1 {
         // unexpected error
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
-
-    response := map[string]interface{} {"Id" : id, "Audio" : audio}
-    if err := json.NewEncoder(w).Encode(response); err != nil {
-        // failed to encode data
         w.WriteHeader(http.StatusInternalServerError)
         return
     }
@@ -117,6 +113,10 @@ func getAllTracks(w http.ResponseWriter, r *http.Request) {
         w.WriteHeader(http.StatusNotFound)
     }
 
+    if numTracks == -1 {
+        w.WriteHeader(http.StatusInternalServerError)
+    }
+
     titles := make([]string, len(allTracks))
     for _, t := range allTracks {
         titles = append(titles, t.Id)
@@ -124,4 +124,25 @@ func getAllTracks(w http.ResponseWriter, r *http.Request) {
 
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(titles)
+}
+
+func deleteTrack(w http.ResponseWriter, r *http.Request) {
+    // function that will delete a track from a given id
+    data := mux.Vars(r)
+
+    id, ok := data["id"]
+    if !ok {
+        // no track id was found
+        w.WriteHeader(http.StatusBadRequest)
+    }
+
+    response := repository.DeleteTrack(id)
+    
+    if response > 0 {
+        w.WriteHeader(http.StatusNoContent)
+    } else if response == 0 {
+        w.WriteHeader(http.StatusNotFound)
+    } else {
+        w.WriteHeader(http.StatusInternalServerError)
+    }
 }
