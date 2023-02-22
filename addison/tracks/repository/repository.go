@@ -81,6 +81,30 @@ func AddNewTrack(t Track) int64 {
     }
 }
 
+func UpdateTrack(t Track) int64 {
+    const sql = "UPDATE tracks SET audio = ? WHERE id = ?"
+    if stmt, err := repo.DB.Prepare(sql); err == nil {
+        defer stmt.Close()
+        if result, err := stmt.Exec(t.Audio, t.Id); err == nil {
+            if rowsAffected, err := result.RowsAffected(); err == nil {
+                return rowsAffected
+            } else {
+                // failed to read the rows affected
+                repo.Log.Output(2, "failed to read the row count in sql update statement: " + err.Error())
+                return -1
+            }
+        } else {
+            // failed to execute sql
+            repo.Log.Output(2, "failed to execute sql update statement: " + err.Error())
+            return -1
+        }
+    } else {
+        // failed to prepare statement
+        repo.Log.Output(2, "failed to prepare sql update statement: " + err.Error())
+        return -1
+    }
+}
+
 func GetTrackById(id string) (Track, int) {
     const sql = "SELECT * FROM tracks WHERE id = ?"
     if stmt, err := repo.DB.Prepare(sql); err == nil {

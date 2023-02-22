@@ -57,9 +57,18 @@ func addNewTrack(w http.ResponseWriter, r *http.Request) {
 
     repoResponse := repository.AddNewTrack(track)
     
+    // if response is not created then try and update
+
     if repoResponse == 0 {
         // track already exists
-        w.WriteHeader(http.StatusConflict)
+        res := repository.UpdateTrack(track)
+        if res < 0 {
+            // failed interally
+            w.WriteHeader(http.StatusInternalServerError)
+        } else if res > 0 {
+            // inserted
+            w.WriteHeader(http.StatusNoContent)
+        }
         return
     } else if repoResponse == -1 {
         // unexpected error
