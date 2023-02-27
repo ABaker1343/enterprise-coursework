@@ -9,7 +9,7 @@ cd $topdir/addison/tracks
 go run main.go &
 cd $topdir/addison/search
 go run main.go &
-cd $topdir/addison.=/cooltown
+cd $topdir/addison/cooltown
 go run main.go &
 
 # wait for each process to start
@@ -18,18 +18,29 @@ sleep 3
 # run the tests in the tracks microservice
 
 cd $topdir/addison/tracks/
+echo -e "running test 1 : inserting to database"
 ./script1.sh
+echo -e "running test 2 : getting single track from database"
 ./script2.sh
+echo -e "running test 3 : getting all tracks from database"
 ./script3.sh
+echo -e "running test 4 : deleting track from database"
 ./script4.sh
+echo -e "running test 2 : getting track after it has been deleted from database"
 ./script2.sh
 
 # run the tests in the search microservice
 
+echo -e ""
+
 cd $topdir/addison/search
+echo -e "running test 5 : testing search with backstreets back"
 ./script5.sh
 
 # run the tests in the cooltown microservice
 
+echo -e "n"
+
 cd $topdir/addison/cooltown
+echo -e "running test 6 : testing cooltown with backstreets back"
 ./script6.sh
