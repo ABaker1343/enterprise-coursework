@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+#
+topdir=$(pwd)
+echo $topdir
+#run the services
+
+cd $topdir/addison/tracks
+go run main.go &
+cd $topdir/addison/search
+go run main.go &
+cd $topdir/addison.=/cooltown
+go run main.go &
+
+# wait for each process to start
+sleep 3
+
+# run the tests in the tracks microservice
+
+cd $topdir/addison/tracks/
+./script1.sh
+./script2.sh
+./script3.sh
+./script4.sh
+./script2.sh
+
+# run the tests in the search microservice
+
+cd $topdir/addison/search
+./script5.sh
+
+# run the tests in the cooltown microservice
+
+cd $topdir/addison/cooltown
+./script6.sh
