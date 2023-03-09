@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
-    "bytes"
-    "log"
-    "io"
-    "strings"
+	"bytes"
+	"io"
+	"log"
+
+	//"strings"  -- used to read from file which has been removed
 	"github.com/gorilla/mux"
 )
 
@@ -22,18 +23,25 @@ type APIResult struct {
 }
 
 var token string
+const KEY = "test"
 var logger *log.Logger
 
 func Init() int {
+    // this function is for initialisation and will read the api key from the api_token.txt file
+    // for the coursework the token will be hard coded in by the marker and so this function can be ignored
+
     // read the token from a file
-    if data, err := os.ReadFile("api_token.txt"); err == nil {
+    /*if data, err := os.ReadFile("api_token.txt"); err == nil {
         token = string(data)
         token = strings.TrimSuffix(token, "\n")
         logger = log.New(os.Stdin, "", 0)
     } else {
         // failed to read token
         log.Fatal("failed to read api token")
-    }
+    }*/
+
+    token = KEY
+    logger = log.New(os.Stdin, "", 0)
     return 0
 }
 
