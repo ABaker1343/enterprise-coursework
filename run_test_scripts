@@ -32,6 +32,8 @@ echo -e "running test 4 : deleting track from database"
 ./script4.sh
 echo -e "running test 2 : getting track after it has been deleted from database"
 ./script2.sh
+echo -e "putting track back into database"
+./script1.sh
 
 # run the tests in the search microservice
 
