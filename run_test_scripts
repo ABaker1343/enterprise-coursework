@@ -1,16 +1,20 @@
 #!/bin/sh
 #
 #
+
 topdir=$(pwd)
 echo $topdir
 #run the services
 
 cd $topdir/addison/tracks
 go run main.go &
+TRACKS=$(echo $!)
 cd $topdir/addison/search
 go run main.go &
+SEARCH=$(echo $!)
 cd $topdir/addison/cooltown
 go run main.go &
+COOLTOWN=$(echo $!)
 
 # wait for each process to start
 sleep 3
@@ -44,3 +48,8 @@ echo -e "n"
 cd $topdir/addison/cooltown
 echo -e "running test 6 : testing cooltown with backstreets back"
 ./script6.sh
+
+# shutdown the microservices
+kill $TRACKS
+kill $SEARCH
+kill $COOLTOWN
